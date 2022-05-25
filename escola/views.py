@@ -1,13 +1,25 @@
-from django.db import models
+from rest_framework import viewsets, generics
+from escola.models import Aluno, Curso, Matricula
+from escola.serializer import AlunoSerializer, CursoSerializer, ListMatriculasAlunoSerializer, MatriculaSerializer
 
-# Create your views here.
-class Aluno(models.Model):
-    nome = models.CharField(max_length=30)
-    rg = models.CharField(max_length=9)
-    cpf = models.CharField(max_length=11)
-    data_nascimento = models.CharField(max_length=30)
-    nome = models.DateField()
+class AlunosViewSet(viewsets.ModelViewSet):
+    """ Exibir todos os alunos e alunas """
+    queryset = Aluno.objects.all()
+    serializer_class = AlunoSerializer
 
-    def __str__(self):
-        return self.nome
+class CursosViewSet(viewsets.ModelViewSet):
+    """ Exibir todos os cursos """
+    queryset = Curso.objects.all()
+    serializer_class = CursoSerializer
 
+class MatriculaViewSet(viewsets.ModelViewSet):
+    """ Exibir todas as matriculas """
+    queryset = Matricula.objects.all()
+    serializer_class = MatriculaSerializer
+
+class ListaMatriculasAluno(generics.ListAPIView):
+    """ Exibindo todas as matriculas de um aluno """
+    def get_queryset(self):
+        queryset = Matricula.objects.filter(aluno_id=self.kwargs['pk'])
+        return queryset
+    serializer_class = ListMatriculasAlunoSerializer
